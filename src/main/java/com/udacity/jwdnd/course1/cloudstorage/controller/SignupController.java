@@ -1,8 +1,8 @@
 package com.udacity.jwdnd.course1.cloudstorage.controller;
 
 
-import com.udacity.jwdnd.course1.cloudstorage.model.User;
 import com.udacity.jwdnd.course1.cloudstorage.services.UserService;
+import com.udacity.jwdnd.course1.cloudstorage.services.model.SignupUserRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,29 +24,25 @@ public class SignupController {
     public String signupView(){return "signup";}
 
     @PostMapping
-    public String signupUser(@ModelAttribute User user, Model model){
-        String signupError = null;
-
-        if(!userService.isUsernameAvailable(user.getUsername())){
-            signupError = "The username already exists.";
-        }
-
-        if(signupError == null){
-            int rowsAdded = userService.createUser(user);
-            if(rowsAdded < 1 ){
-                signupError = "There was an error signing you up. Please try again.";
-            }
-        }
-
-        if(signupError == null){
+    public String signupUser(@ModelAttribute SignupUserRequest signupUserRequest, Model model) {
+        try {
+            userService.createUser(signupUserRequest);
             model.addAttribute("signupSuccess",true);
-        }else {
-            model.addAttribute("signupError",signupError);
+        } catch (UserService.UserServiceException e) {
+            model.addAttribute("signupError", e.getMessage());
         }
 
         return "signup";
     }
 
+
+    // latered architecture
+// controller (http, make the service call, tranlate error back into http status codes or redirect to another page)
+// -> service (use cases , busines logic, possibly throw an error if something fails)
+// -> data access/repository/ data access object / resource (mapper)  (bring data into and out of the system)
+
+    // modelor data transfer object
+    // domain model object (store data to and from the database )
 
 
 }

@@ -2,6 +2,7 @@ package com.udacity.jwdnd.course1.cloudstorage.services;
 
 import com.udacity.jwdnd.course1.cloudstorage.mapper.UserMapper;
 import com.udacity.jwdnd.course1.cloudstorage.model.User;
+import com.udacity.jwdnd.course1.cloudstorage.services.model.SignupUserRequest;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
@@ -17,17 +18,46 @@ public class UserService {
         this.hashService = hashService;
     }
 
-    public boolean isUsernameAvailable(String username){
+    private boolean isUsernameAvailable(String username){
         return userMapper.getUser(username) == null;
     }
 
-    public int createUser(User user){
+    public static class UserAlreadyExistsException extends UserServiceException {
+        public UserAlreadyExistsException() {
+            super("The username already exists.");
+        }
+    }
+
+    public static class UserServiceException extends RuntimeException {
+        public UserServiceException(String message) {
+            super(message);
+        }
+
+        public UserServiceException(String message, Throwable error) {
+            super(message, error);
+        }
+    }
+
+    public void createUser(SignupUserRequest signupUserRequest) {
+        if(!isUsernameAvailable(signupUserRequest.getUsername())) {
+            throw new UserAlreadyExistsException();
+        }
+
+        String encodedSalt = salt();
+        String hashedPassword = hashService.getHashedValue(signupUserRequest.getPassword(), encodedSalt);
+
+        int rowsAdded = userMapper.insertUser(new User(signupUserRequest.getUsername(), encodedSalt, hashedPassword, signupUserRequest.getFirstName(), signupUserRequest.getLastName()));
+
+        if(rowsAdded < 1 ){
+            throw new UserServiceException("There was an error signing you up. Please try again.");
+        }
+    }
+
+    private String salt() {
         SecureRandom random = new SecureRandom();
         byte[] salt = new byte[16];
         random.nextBytes(salt);
-        String encodedSalt = Base64.getEncoder().encodeToString(salt);
-        String hashedPassword = hashService.getHashedValue(user.getPassword(), encodedSalt);
-        return userMapper.insertUser(new User(null, user.getUsername(), encodedSalt, hashedPassword, user.getFirstName(), user.getLastName()));
+        return Base64.getEncoder().encodeToString(salt);
     }
 
     public User getUser(String username) {

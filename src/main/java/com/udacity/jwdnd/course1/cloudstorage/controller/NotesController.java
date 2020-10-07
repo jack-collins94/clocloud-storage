@@ -1,18 +1,12 @@
 package com.udacity.jwdnd.course1.cloudstorage.controller;
 
-import com.udacity.jwdnd.course1.cloudstorage.mapper.UserMapper;
 import com.udacity.jwdnd.course1.cloudstorage.model.Note;
 import com.udacity.jwdnd.course1.cloudstorage.model.NoteForm;
-import com.udacity.jwdnd.course1.cloudstorage.model.User;
 import com.udacity.jwdnd.course1.cloudstorage.services.NoteService;
 import com.udacity.jwdnd.course1.cloudstorage.services.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("/notes")
@@ -27,15 +21,35 @@ public class NotesController {
     }
 
     @PostMapping("/add")
-    public String addNewNote(Authentication authentication, NoteForm noteForm){
-
-        Note newNote = new Note();
+    public String addOrUpdateNote(Authentication authentication, NoteForm noteForm){
+        Note newNote = null;
+        if(noteForm.getNoteId() == null){
+        newNote = new Note();
         newNote.setNoteTitle(noteForm.getNoteTitle());
         newNote.setNoteDescription(noteForm.getNoteDescription());
         newNote.setUserId(userService.getUser(authentication.getName()).getUserId());
         noteService.createNote(newNote);
-
-        return "redirect:/home";
+        }else{
+            newNote = noteService.getById(noteForm.getNoteId());
+            newNote.setNoteTitle(noteForm.getNoteTitle());
+            newNote.setNoteDescription(noteForm.getNoteDescription());
+            noteService.updateNote(newNote);
+        }
+        return "redirect:/result?success";
 
     }
+
+    @GetMapping("/delete/{noteId}")
+    public String deleteNote(@PathVariable Integer noteId){
+
+        noteService.deleteNote(noteId);
+
+        return ("redirect:/result?success");
+    }
+
+
+    // get - retrive info - html/data - safe operation - should not change the state of the system
+    // post - change the state on the serve (create data)
+    // put - update the data (api)
+    // delete - delete the data (api)
 }
