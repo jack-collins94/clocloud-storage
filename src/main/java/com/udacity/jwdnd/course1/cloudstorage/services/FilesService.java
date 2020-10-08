@@ -31,7 +31,11 @@ public class FilesService {
         return fileMapper.getFile(fileId);
     }
 
-    public List<Files> getAllFiles(Integer userId){
-        return fileMapper.selectAllFiles(userId);
+    public List<Files> getAllUserFiles(Integer userId){
+        return fileMapper.selectAllFilesByUID(userId);
     }
+
+    public List<Files> getAllFiles(){ return fileMapper.selectAllFiles();}
+
+
 }

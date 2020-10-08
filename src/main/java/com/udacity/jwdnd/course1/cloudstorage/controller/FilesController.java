@@ -3,6 +3,8 @@ package com.udacity.jwdnd.course1.cloudstorage.controller;
 import com.udacity.jwdnd.course1.cloudstorage.model.Files;
 import com.udacity.jwdnd.course1.cloudstorage.services.FilesService;
 import com.udacity.jwdnd.course1.cloudstorage.services.UserService;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +15,9 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.List;
 
 @Controller
 @RequestMapping("/files")
@@ -54,12 +58,12 @@ public class FilesController {
 
         if (errorMessage == null) {
             filesService.uploadFile(files);
-            model.addAttribute("fileUploadSuccess", true);
+            return "redirect:/result?success";
         } else {
             model.addAttribute("fileUploadError", errorMessage);
+            return "redirect:/result?error";
         }
 
-        return "redirect:/home";
     }
 
     @GetMapping("/delete/{fileId}")
@@ -69,13 +73,21 @@ public class FilesController {
         return "redirect:/home";
     }
 
-    @GetMapping("/download/{fileId")
-    public ResponseEntity downloadFile(@PathVariable(name = "fileId") Integer fileId){
-        Files files = filesService.downloadFile(fileId);
+    @GetMapping("/download/{fileId}")
+    public ResponseEntity downloadFile(@RequestParam Integer fileId){
+       Files files = filesService.downloadFile(fileId);
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType(files.getContentType()))
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + files.getFileName() + "\"")
-                .body(files.getFileData());
+                .body(new ByteArrayResource(files.getFileData()));
+
+//        Files newFile = filesService.downloadFile(fileId);
+//        return ResponseEntity.ok()
+//                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + newFile.getFileName() + "\"")
+//                .body(newFile);
+
+        //InputStreamResource resource = new InputStreamResource(new FileInputStream(files));
+    }
 
     }
-}
+

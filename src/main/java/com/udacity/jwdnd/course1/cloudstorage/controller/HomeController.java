@@ -6,7 +6,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequestMapping("/home")
@@ -31,7 +30,7 @@ public class HomeController {
         Integer userId = userService.getUser(authentication.getName()).getUserId();
         model.addAttribute("notes", noteService.getAllNotes(userId));
         model.addAttribute("credentials",credentialService.getAllCredentials(userId));
-        model.addAttribute("files", filesService.getAllFiles(userId));
+        model.addAttribute("files", filesService.getAllUserFiles(userId));
         model.addAttribute("encryptionService", encryptionService);
         return "home";
     }
