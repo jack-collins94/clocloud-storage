@@ -35,7 +35,7 @@ public class NotesController {
             newNote.setNoteDescription(noteForm.getNoteDescription());
             noteService.updateNote(newNote);
         }
-        return "redirect:/result?success";
+        return "redirect:/home";
 
     }
 
@@ -44,7 +44,7 @@ public class NotesController {
 
         noteService.deleteNote(noteId);
 
-        return ("redirect:/result?success");
+        return "redirect:/home";
     }
 
 

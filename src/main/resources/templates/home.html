@@ -25,7 +25,7 @@
                 </nav>
                 <div class="tab-content" id="nav-tabContent">
                     <div class="tab-pane fade show active" id="nav-files" role="tabpanel" aria-labelledby="nav-files-tab">
-                        <form action="#" enctype="multipart/form-data" method="POST">
+                        <form action="#" th:action="@{/files/add}" enctype="multipart/form-data" method="POST">
                             <div class="container">
                                 <div class="row" style="margin: 1em;">
                                     <div class="col-sm-2">
@@ -48,13 +48,13 @@
                                         <th style="width: 80%" scope="col">File Name</th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody th:each="file : ${files}">
                                 <tr>
                                     <td>
-                                        <a target="_blank" class="btn btn-success">View</a>
-                                        <a  class="btn btn-danger">Delete</a>
+                                        <a target="_blank" class="btn btn-success" th:href="@{'/file/download/' + ${file.getFileId()}}">View</a>
+                                        <a  class="btn btn-danger" th:href="@{'/files/delete/' + ${file.getFileId()}}">Delete</a>
                                     </td>
-                                    <th scope="row">ExampleFile.txt</th>
+                                    <th scope="row" th:text="${file.getFileName()}">ExampleFile.txt</th>
                                 </tr>
                                 </tbody>
                             </table>
@@ -77,7 +77,11 @@
                                 <tbody th:each="note : ${notes}">
                                     <tr>
                                         <td>
-                                            <button type="button" class="btn btn-success" th:onclick="'javascript:showNoteModal(\'' + ${note.getNoteId()} + '\');'">Edit</button>
+                                            <button type="button" class="btn btn-success"
+                                                    th:noteId="${note.getNoteId()}"
+                                                    th:title="${note.getNoteTitle()}"
+                                                    th:description="${note.getNoteDescription()}"
+                                                    th:onclick="javascript:showNoteModal(this.getAttribute('noteId'),this.getAttribute('title'),this.getAttribute('description'));">Edit</button>
                                             <a class="btn btn-danger" th:href="@{'/notes/delete/' + ${note.getNoteId()}}">Delete</a>
                                         </td>
                                         <th scope="row" th:text="${note.getNoteTitle()}"></th>
@@ -137,7 +141,14 @@
                                 <tr>
                                     <td>
 
-                                        <button type="button" class="btn btn-success" th:onclick="'javascript:showCredentialModal(\'' + ${credential.getCredentialId()} + '\');'">Edit</button>
+                                        <button type="button" class="btn btn-success"
+                                                th:credentialId="${credential.getCredentialId()}"
+                                                th:url="${credential.getUrl()}"
+                                                th:username="${credential.getUsername()}"
+                                                th:password="${credential.getPassword()}"
+                                                th:key="${credential.getKey()}"
+                                                th:decryption="${encryptionService.decryptValue(this.getAttribute('password'),this.getAttribute('key'))}"
+                                                th:onclick="javascript:showCredentialModal(this.getAttribute('credentialId'),this.getAttribute('url'),this.getAttribute('username'),this.getAttribute('decryption'));">Edit</button>
                                         <a class="btn btn-danger" th:href="@{'/credentials/delete/' + ${credential.getCredentialId()}}">Delete</a>
                                     </td>
                                     <th scope="row" th:text="${credential.getUrl()}"></th>

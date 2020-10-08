@@ -20,7 +20,10 @@ public interface CredentialsMapper {
     int deleteCredential(Integer credentialId);
 
     @Select("SELECT * FROM CREDENTIALS WHERE credentialid = #{credentialId}")
-    Credentials getCredentialsById(int userId);
+    Credentials getCredentialsById(int credentialId);
+
+    @Select("SELECT password FROM CREDENTIALS WHERE credentialid=#{credentialID")
+    String getDecryptedPassword(int credentialId);
 
     @Update("UPDATE CREDENTIALS SET url = #{url}, username = #{username}, key = #{key}, password = #{password}, userId = #{userId} WHERE credentialId = #{credentialId}")
     int updateCredential(Credentials credentials);

@@ -57,4 +57,9 @@ public class CredentialsController {
 
         return ("redirect:/home");
     }
+
+    //@GetMapping("/get/{credentialId}")
+//    public Credentials viewCredentials(@PathVariable(name="credentialsId") Integer credentialId){
+//        return credentialService.getDecryptedCredentials(credentialId);
+//    }
 }

@@ -24,6 +24,8 @@ public class CredentialService {
         return credentials;
     }
 
+
+
     public int createCredentials(Credentials credentials){
 
         SecureRandom random = new SecureRandom();
@@ -47,5 +49,10 @@ public class CredentialService {
         credentials.setPassword(encryptionService.encryptValue(credentials.getPassword(), encodedKey));
         credentials.setKey(encodedKey);
         return credentialsMapper.updateCredential(credentials);
+    }
+
+    public String getDecryptedCredentials(Integer credentialId){
+        String decryptedPassword = credentialsMapper.getDecryptedPassword(credentialId);
+        return decryptedPassword;
     }
 }
