@@ -37,6 +37,17 @@ public class NotesPage {
     @FindBy(id="deleteNoteBtn")
     private WebElement deleteNoteBtn;
 
+    @FindBy(id="logout-button")
+    private WebElement logoutBtn;
+
+    public WebElement getLogoutBtn() {
+        return logoutBtn;
+    }
+
+    public void logout(){
+        this.logoutBtn.click();
+    }
+
     public WebElement getDeleteNoteBtn() {
         return deleteNoteBtn;
     }

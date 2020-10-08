@@ -40,6 +40,17 @@ public class CredentialsPage {
     @FindBy(id="deleteCredentialBtn")
     private WebElement deleteCredentialBtn;
 
+    @FindBy(id="logout-button")
+    private WebElement logoutBtn;
+
+    public WebElement getLogoutBtn() {
+        return logoutBtn;
+    }
+
+    public void logout(){
+        this.logoutBtn.click();
+    }
+
     public CredentialsPage(WebDriver webDriver) {
         PageFactory.initElements(webDriver, this);
     }
@@ -69,9 +80,9 @@ public class CredentialsPage {
     }
 
     public void populateCredentials(String url, String username, String password){
-//        inputURL.clear();
-//        inputUsername.clear();
-//        inputPassword.clear();
+        inputURL.clear();
+        inputUsername.clear();
+        inputPassword.clear();
         inputURL.sendKeys(url);
         inputUsername.sendKeys(username);
         inputPassword.sendKeys(password);
@@ -96,4 +107,6 @@ public class CredentialsPage {
     public WebElement getDeleteCredentialBtn() {
         return deleteCredentialBtn;
     }
+
+
 }
