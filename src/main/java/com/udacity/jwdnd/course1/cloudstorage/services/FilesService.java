@@ -28,7 +28,7 @@ public class FilesService {
     }
 
     public Files downloadFile(Integer fileId){
-        return fileMapper.getFile(fileId);
+        return fileMapper.selectById(fileId);
     }
 
     public List<Files> getAllUserFiles(Integer userId){
